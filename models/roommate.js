@@ -4,7 +4,12 @@ mongoose.set('useCreateIndex', true);
 const Schema = mongoose.Schema;
 
 const roommateSchema = new Schema({
-  //Define properties here
-});
+  email: {type: String, unique: true},
+  firstName: { type: String },
+  lastName: { type: String },
+  listingAddress: {type: String, unique: true},
+  phoneNumber: {type: Number},
+  summary: {type:String}
+  });
 
 module.exports = mongoose.model('Roommate', roommateSchema);

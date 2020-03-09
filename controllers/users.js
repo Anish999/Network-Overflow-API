@@ -7,7 +7,7 @@ const getUsers = async (req, res, next) => {
   try {
     users = await User.find();
   } catch (err) {
-    const error = new Error('Something went weong! Users could not be found');
+    const error = new Error('Something went weong! User could not be found');
     error.code = 500;
     return next(error);
   }
