@@ -37,7 +37,7 @@ let url = `mongodb+srv://${username}:${password}@phase2-415-n2ctl.mongodb.net/ne
 mongoose
   .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() =>
-    app.listen(5000, () => {
+    app.listen(process.env.PORT, () => {
       console.log(`Server is running....`);
     })
   )
