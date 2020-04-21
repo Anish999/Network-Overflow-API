@@ -1,24 +1,26 @@
 const mongoose = require('mongoose');
 const Event = require('../models/event');
 
-
 //get events
 const getEvents = async (req, res, next) => {
   let events;
   try {
     events = await Event.find();
   } catch (err) {
-    const error = new Error('Something went wrong! The event could not be found');
+    const error = new Error(
+      'Something went wrong! The event could not be found'
+    );
     error.code = 500;
     return next(error);
   }
-  res.json({ events: events.map(Event => Event.toObject({ getters: true })) });
+  res.json({
+    events: events.map((Event) => Event.toObject({ getters: true })),
+  });
 };
 
 //get event by id
 const getEventById = async (req, res, next) => {
-  const eventId = req.params.eid;
-
+  const eventId = req.params.uid;
   let event;
 
   try {
@@ -35,11 +37,21 @@ const getEventById = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ event: event.toObject({ getters: true }) });};
+  res.json({ event: event.toObject({ getters: true }) });
+};
 
 //create event
 const createEvent = async (req, res, next) => {
-  const { eventName, eventStartDate, eventStartTime,eventEndDate,eventEndTime, eventVenue, eventSummary } = req.body;
+  const {
+    eventName,
+    eventStartDate,
+    eventStartTime,
+    eventEndDate,
+    eventEndTime,
+    eventVenue,
+    eventSummary,
+    eventImage,
+  } = req.body;
   let existingEvent;
   try {
     existingEvent = await Event.findOne({ eventName: eventName });
@@ -53,14 +65,15 @@ const createEvent = async (req, res, next) => {
     return res.json({ message });
   }
 
-   const event = new Event({
-    eventName, 
+  const event = new Event({
+    eventName,
     eventStartDate,
     eventStartTime,
     eventEndDate,
     eventEndTime,
     eventVenue,
-    eventSummary
+    eventSummary,
+    eventImage,
   });
 
   try {
@@ -77,13 +90,24 @@ const createEvent = async (req, res, next) => {
 //edit event
 const editEvent = async (req, res, next) => {
   const eventId = req.body.id;
-  const {  eventName, eventStartDate, eventStartTime,eventEndDate,eventEndTime, eventVenue, eventSummary  } = req.body;
+  const {
+    eventName,
+    eventStartDate,
+    eventStartTime,
+    eventEndDate,
+    eventEndTime,
+    eventVenue,
+    eventSummary,
+    eventImage,
+  } = req.body;
   let event;
 
   try {
     event = await Event.findById(eventId);
   } catch (err) {
-    const error = new Error('Something went wrong. Could not update the event.');
+    const error = new Error(
+      'Something went wrong. Could not update the event.'
+    );
     error.code = 500;
     return next(error);
   }
@@ -93,28 +117,32 @@ const editEvent = async (req, res, next) => {
     error.code = 404;
     return next(error);
   } else {
-    event.eventName= eventName;
-    event.eventStartDate= eventStartDate;
-    event.eventStartTime= eventStartTime;
-    event.eventEndDate= eventEndDate;
-    event.eventEndTime=eventEndTime;
-    event.eventVenue= eventVenue;
-    event.eventSummary= eventSummary;
-    
+    event.eventName = eventName;
+    event.eventStartDate = eventStartDate;
+    event.eventStartTime = eventStartTime;
+    event.eventEndDate = eventEndDate;
+    event.eventEndTime = eventEndTime;
+    event.eventVenue = eventVenue;
+    event.eventSummary = eventSummary;
+    event.eventImage = eventImage;
+
     try {
       await event.save();
     } catch (err) {
-      const error = new Error('Something went wrong, could not update the Event');
+      const error = new Error(
+        'Something went wrong, could not update the Event'
+      );
       error.code = 500;
       return next(error);
     }
   }
 
-  res.json({ event: event.toObject({ getters: true }) });};
+  res.json({ event: event.toObject({ getters: true }) });
+};
 
 //delete event
 const deleteEvent = async (req, res, next) => {
-  const eventId = req.params.eid;
+  const eventId = req.params.uid;
 
   let event;
 
