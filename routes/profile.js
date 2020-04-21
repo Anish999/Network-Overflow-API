@@ -12,7 +12,7 @@ const router = express.Router();
 /**
  * PROFILE IMAGE STORING STARTS*/
 const s3 = new aws.S3({
-  accessKeyId: process.env.AWS_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   Bucket: 'network-overflow',
 });
@@ -25,6 +25,7 @@ const profileImgUpload = multer({
     bucket: 'network-overflow',
     acl: 'public-read',
     key: function (req, file, cb) {
+      console.log(file.originalname);
       cb(
         null,
         path.basename(file.originalname, path.extname(file.originalname)) +
