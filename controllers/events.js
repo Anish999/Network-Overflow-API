@@ -61,8 +61,9 @@ const createEvent = async (req, res, next) => {
     return next(error);
   }
   if (existingEvent) {
+    const code = 'Warning';
     const message = 'Event already exists';
-    return res.json({ message });
+    return res.json({ code, message });
   }
 
   const event = new Event({
@@ -78,6 +79,9 @@ const createEvent = async (req, res, next) => {
 
   try {
     await event.save();
+    const code = 'Success';
+    const message = 'Event added successfully';
+    return res.json({ code, message });
   } catch (err) {
     const error = new Error('Something went wrong, event could not be added!');
     error.code = 500;
