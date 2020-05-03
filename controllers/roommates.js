@@ -39,44 +39,49 @@ const getRoommateById = async (req, res, next) => {
 
 //create roommates
 const createRoommate = async (req, res, next) => {
-  const {  email, firstName, lastName, listingAddress, phoneNumber, summary} = req.body;
-  let existingRoommate;
-  try {
-    existingRoommate = await Roommate.findOne({ listingAddress: listingAddress });
-  } catch (err) {
-    const error = new Error('Could not create the room advertisment. Try again');
-    error.code = 500;
-    return next(error);
-  }
-  if (existingRoommate) {
-    const message = 'Room advertisment already exists';
-    return res.json({ message });
-  }
+  const { image,listingType, email, firstName, lastName, listingAddress, phoneNumber, summary} = req.body;
+  // let existingRoommate;
+  // try {
+  //   existingRoommate = await Roommate.findOne({ listingAddress: listingAddress });
+  // } catch (err) {
+  //   const error = new Error('Could not create the room advertisment. Try again');
+  //   error.code = 500;
+  //   return next(error);
+  // }
+  // if (existingRoommate) {
+  //   const message = 'Room advertisment already exists';
+  //   return res.json({ message });
+  // }
 
    const roommate = new Roommate({
     email,
     firstName,
     lastName,
+    listingType,
     listingAddress,
     phoneNumber,
     summary,
+    image
   });
 
   try {
     await roommate.save();
+    const code = 'Success';
+    const message = 'Room listing added successfully';
+    return res.json({ code, message });
   } catch (err) {
     const error = new Error('Something went wrong, room advertisment could not be added!');
     error.code = 500;
     return next(err);
   }
 
-  res.json({ roommate: roommate.toObject({ getters: true }) });
+//  res.json({ roommate: roommate.toObject({ getters: true }) });
 };
 
 //edit or update roommates
 const editRoommate = async (req, res, next) => {
   const roommateId = req.body.id;
-  const { email, firstName, lastName, listingAddress, phoneNumber, summary } = req.body;
+  const { image, email, firstName, lastName, listingAddress, phoneNumber, summary,listingType } = req.body;
   let roommate;
 
   try {
@@ -98,6 +103,8 @@ const editRoommate = async (req, res, next) => {
     roommate.listingAddress = listingAddress;
     roommate.summary = summary;
     roommate.phoneNumber = phoneNumber;
+    roommate.listingType= listingType;
+    roommate.image = image;
 
     try {
       await roommate.save();
