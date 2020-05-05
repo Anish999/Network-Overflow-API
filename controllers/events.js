@@ -51,6 +51,7 @@ const createEvent = async (req, res, next) => {
     eventVenue,
     eventSummary,
     eventImage,
+    eventCreator,
   } = req.body;
   let existingEvent;
   try {
@@ -75,6 +76,7 @@ const createEvent = async (req, res, next) => {
     eventVenue,
     eventSummary,
     eventImage,
+    eventCreator,
   });
 
   try {

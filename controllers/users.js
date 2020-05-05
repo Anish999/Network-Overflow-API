@@ -11,7 +11,29 @@ const getUsers = async (req, res, next) => {
     error.code = 500;
     return next(error);
   }
-  res.json({ users: users.map(user => user.toObject({ getters: true })) });
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
+};
+
+const getUserByEmail = async (req, res, next) => {
+  const email = req.params.email;
+
+  let user;
+
+  try {
+    user = await User.findOne({ email: email });
+  } catch (err) {
+    const error = new Error('Something went wrong! User could not be found');
+    error.code = 500;
+    return next(error);
+  }
+
+  if (!user) {
+    const error = new Error('User not found.');
+    error.code = 404;
+    return next(error);
+  }
+
+  res.json({ user: user.toObject({ getters: true }) });
 };
 
 const getUserById = async (req, res, next) => {
@@ -60,7 +82,8 @@ const signUp = async (req, res, next) => {
     firstName,
     lastName,
     password,
-    role
+    role,
+    hasPet: true,
   });
 
   try {
@@ -97,7 +120,7 @@ const addUser = async (req, res, next) => {
     email,
     lastName,
     password,
-    role
+    role,
   });
 
   try {
@@ -113,7 +136,7 @@ const addUser = async (req, res, next) => {
 
 const editUser = async (req, res, next) => {
   const userId = req.body.id;
-  const { email, firstName, lastName, password, role } = req.body;
+  const { email, firstName, lastName, password, role, hasPet } = req.body;
   let user;
 
   try {
@@ -134,6 +157,7 @@ const editUser = async (req, res, next) => {
     user.lastName = lastName;
     user.password = password;
     user.role = role;
+    user.hasPet = hasPet;
 
     try {
       await user.save();
@@ -185,3 +209,4 @@ exports.signUp = signUp;
 exports.addUser = addUser;
 exports.editUser = editUser;
 exports.deleteUser = deleteUser;
+exports.getUserByEmail = getUserByEmail;

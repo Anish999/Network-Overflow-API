@@ -5,7 +5,11 @@ const middleware = require('../authentication/checkToken');
 
 const router = express.Router();
 
-router.get('/', middleware.checkToken, usersController.getUsers);
+//router.get('/', middleware.checkToken, usersController.getUsers);
+
+router.get('/', usersController.getUsers);
+
+router.get('/:email', usersController.getUserByEmail);
 
 router.post('/signUp', usersController.signUp);
 

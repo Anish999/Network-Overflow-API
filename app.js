@@ -7,6 +7,7 @@ const roommatesRoutes = require('./routes/roommates-routes');
 const eventsRoutes = require('./routes/events-routes');
 const loginRoutes = require('./routes/login-routes');
 const profile = require('./routes/profile');
+const addressRoutes = require('./routes/addresses-routes');
 
 const app = express();
 app.use(bodyParser.json());
@@ -23,6 +24,7 @@ app.use('/api/roommates', roommatesRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api', loginRoutes);
 app.use('/api/profile', profile);
+app.use('/api/addresses', addressRoutes);
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {

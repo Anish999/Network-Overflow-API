@@ -7,11 +7,17 @@ const getRoommates = async (req, res, next) => {
   try {
     roommates = await Roommate.find();
   } catch (err) {
-    const error = new Error('Something went wrong! The room listing could not be found');
+    const error = new Error(
+      'Something went wrong! The room listing could not be found'
+    );
     error.code = 500;
     return next(error);
   }
-  res.json({ rommmates: roommates.map(Roommate => Roommate.toObject({ getters: true })) });
+  res.json({
+    rommmates: roommates.map((Roommate) =>
+      Roommate.toObject({ getters: true })
+    ),
+  });
 };
 
 //get roommates by id
@@ -23,7 +29,9 @@ const getRoommateById = async (req, res, next) => {
   try {
     roommates = await Roommate.findById(roommateId);
   } catch (err) {
-    const error = new Error('Something went wrong! Roommate could not be found');
+    const error = new Error(
+      'Something went wrong! Roommate could not be found'
+    );
     error.code = 500;
     return next(error);
   }
@@ -39,29 +47,25 @@ const getRoommateById = async (req, res, next) => {
 
 //create roommates
 const createRoommate = async (req, res, next) => {
-  const { image,listingType, email, firstName, lastName, listingAddress, phoneNumber, summary} = req.body;
-  // let existingRoommate;
-  // try {
-  //   existingRoommate = await Roommate.findOne({ listingAddress: listingAddress });
-  // } catch (err) {
-  //   const error = new Error('Could not create the room advertisment. Try again');
-  //   error.code = 500;
-  //   return next(error);
-  // }
-  // if (existingRoommate) {
-  //   const message = 'Room advertisment already exists';
-  //   return res.json({ message });
-  // }
-
-   const roommate = new Roommate({
-    email,
-    firstName,
-    lastName,
+  const {
+    image,
     listingType,
-    listingAddress,
-    phoneNumber,
-    summary,
-    image
+    user,
+    address,
+    contactNumber,
+    description,
+    petsAllowed,
+  } = req.body;
+
+  const roommate = new Roommate({
+    user,
+    listingType,
+    address,
+    contactNumber,
+    description,
+    image,
+    datePosted: Date.now(),
+    petsAllowed,
   });
 
   try {
@@ -70,24 +74,33 @@ const createRoommate = async (req, res, next) => {
     const message = 'Room listing added successfully';
     return res.json({ code, message });
   } catch (err) {
-    const error = new Error('Something went wrong, room advertisment could not be added!');
+    const error = new Error(
+      'Something went wrong, room advertisment could not be added!'
+    );
     error.code = 500;
     return next(err);
   }
-
-//  res.json({ roommate: roommate.toObject({ getters: true }) });
 };
 
 //edit or update roommates
 const editRoommate = async (req, res, next) => {
   const roommateId = req.body.id;
-  const { image, email, firstName, lastName, listingAddress, phoneNumber, summary,listingType } = req.body;
+  const {
+    image,
+    listingType,
+    address,
+    contactNumber,
+    description,
+    petsAllowed,
+  } = req.body;
   let roommate;
 
   try {
     roommate = await Roommate.findById(roommateId);
   } catch (err) {
-    const error = new Error('Something went wrong. Could not update room listing.');
+    const error = new Error(
+      'Something went wrong. Could not update room listing.'
+    );
     error.code = 500;
     return next(error);
   }
@@ -97,27 +110,29 @@ const editRoommate = async (req, res, next) => {
     error.code = 404;
     return next(error);
   } else {
-    roommate.email = email;
-    roommate.firstName = firstName;
-    roommate.lastName = lastName;
-    roommate.listingAddress = listingAddress;
-    roommate.summary = summary;
-    roommate.phoneNumber = phoneNumber;
-    roommate.listingType= listingType;
+    roommate.address = address;
+    roommate.description = description;
+    roommate.contactNumber = contactNumber;
+    roommate.listingType = listingType;
     roommate.image = image;
+    roommate.petsAllowed = petsAllowed;
+    roommate.datePosted = Date.now();
 
     try {
       await roommate.save();
     } catch (err) {
-      const error = new Error('Something went wrong, could not update the room advertisment');
+      const error = new Error(
+        'Something went wrong, could not update the room advertisment'
+      );
       error.code = 500;
       return next(error);
     }
   }
 
-  res.json({ roommate: roommmate.toObject({ getters: true }) });};
+  res.json({ roommate: roommmate.toObject({ getters: true }) });
+};
 
-  // delete roommates
+// delete roommates
 const deleteRoommate = async (req, res, next) => {
   const roommateId = req.params.id;
 
@@ -126,7 +141,9 @@ const deleteRoommate = async (req, res, next) => {
   try {
     roommate = await Roommate.findById(roommateId);
   } catch (err) {
-    const error = new Error('Something went wrong, room listing could not be found!');
+    const error = new Error(
+      'Something went wrong, room listing could not be found!'
+    );
     error.code = 500;
     return next(error);
   }

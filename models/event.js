@@ -12,6 +12,7 @@ const eventSchema = new Schema({
   eventSummary: { type: String },
   eventImage: { type: String },
   eventVenue: { type: String },
+  eventCreator: { type: String },
 });
 
 module.exports = mongoose.model('Event', eventSchema);
