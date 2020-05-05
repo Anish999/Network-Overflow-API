@@ -59,7 +59,7 @@ const getUserById = async (req, res, next) => {
 };
 
 const signUp = async (req, res, next) => {
-  const { email, firstName, lastName, password } = req.body;
+  const { email, firstName, lastName, password, phoneNumber } = req.body;
 
   let existingUser;
   try {
@@ -85,6 +85,7 @@ const signUp = async (req, res, next) => {
     role,
     hasPet: true,
     profileImage,
+    phoneNumber,
   });
 
   try {
@@ -99,7 +100,14 @@ const signUp = async (req, res, next) => {
 };
 
 const addUser = async (req, res, next) => {
-  const { email, firstName, lastName, role, profileImage } = req.body;
+  const {
+    email,
+    firstName,
+    lastName,
+    role,
+    profileImage,
+    phoneNumber,
+  } = req.body;
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });
@@ -123,7 +131,8 @@ const addUser = async (req, res, next) => {
     lastName,
     password,
     role,
-    profileImage
+    profileImage,
+    phoneNumber: '111-111-1111',
   });
 
   try {
@@ -142,7 +151,16 @@ const addUser = async (req, res, next) => {
 
 const editUser = async (req, res, next) => {
   const userId = req.body.id;
-  const { email, firstName, lastName, password, role, hasPet, profileImage } = req.body;
+  const {
+    email,
+    firstName,
+    lastName,
+    password,
+    role,
+    hasPet,
+    profileImage,
+    phoneNumber,
+  } = req.body;
   let user;
 
   try {
@@ -157,7 +175,6 @@ const editUser = async (req, res, next) => {
     const code = 'Warning';
     const message = 'User not found';
     return res.json({ code, message });
-    
   } else {
     user.email = email;
     user.firstName = firstName;
@@ -165,13 +182,14 @@ const editUser = async (req, res, next) => {
     user.password = password;
     user.role = role;
     user.hasPet = hasPet;
-    user.profileImage = profileImage
+    user.profileImage = profileImage;
+    user.phoneNumber = phoneNumber;
 
     try {
       await user.save();
       const code = 'Success';
-    const message = 'Profile updated Successfully!';
-    return res.json({ code, message });
+      const message = 'Profile updated Successfully!';
+      return res.json({ code, message });
     } catch (err) {
       const error = new Error('Something went wrong, could not update user');
       error.code = 500;
