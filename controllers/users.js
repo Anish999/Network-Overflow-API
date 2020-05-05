@@ -84,6 +84,7 @@ const signUp = async (req, res, next) => {
     password,
     role,
     hasPet: true,
+    profileImage,
   });
 
   try {
@@ -98,7 +99,7 @@ const signUp = async (req, res, next) => {
 };
 
 const addUser = async (req, res, next) => {
-  const { email, firstName, lastName, role } = req.body;
+  const { email, firstName, lastName, role, profileImage } = req.body;
   let existingUser;
   try {
     existingUser = await User.findOne({ email: email });
@@ -108,8 +109,9 @@ const addUser = async (req, res, next) => {
     return next(error);
   }
   if (existingUser) {
+    const code = 'Warning';
     const message = 'User already exists, please login instead';
-    return res.json({ message });
+    return res.json({ code, message });
   }
 
   // TODO: generate the password
@@ -121,10 +123,14 @@ const addUser = async (req, res, next) => {
     lastName,
     password,
     role,
+    profileImage
   });
 
   try {
     await user.save();
+    const code = 'Success';
+    const message = 'Profile updated Successfully!';
+    return res.json({ code, message });
   } catch (err) {
     const error = new Error('Something went wrong, user could not be added!');
     error.code = 500;
@@ -136,7 +142,7 @@ const addUser = async (req, res, next) => {
 
 const editUser = async (req, res, next) => {
   const userId = req.body.id;
-  const { email, firstName, lastName, password, role, hasPet } = req.body;
+  const { email, firstName, lastName, password, role, hasPet, profileImage } = req.body;
   let user;
 
   try {
@@ -148,9 +154,10 @@ const editUser = async (req, res, next) => {
   }
 
   if (!user) {
-    const error = new Error('User not found.');
-    error.code = 404;
-    return next(error);
+    const code = 'Warning';
+    const message = 'User not found';
+    return res.json({ code, message });
+    
   } else {
     user.email = email;
     user.firstName = firstName;
@@ -158,9 +165,13 @@ const editUser = async (req, res, next) => {
     user.password = password;
     user.role = role;
     user.hasPet = hasPet;
+    user.profileImage = profileImage
 
     try {
       await user.save();
+      const code = 'Success';
+    const message = 'Profile updated Successfully!';
+    return res.json({ code, message });
     } catch (err) {
       const error = new Error('Something went wrong, could not update user');
       error.code = 500;

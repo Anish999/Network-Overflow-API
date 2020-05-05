@@ -10,6 +10,7 @@ const userSchema = new Schema({
   password: { type: String },
   role: { type: String },
   hasPet: { type: Boolean },
+  profileImage: {type:String}
 });
 
 module.exports = mongoose.model('User', userSchema);
